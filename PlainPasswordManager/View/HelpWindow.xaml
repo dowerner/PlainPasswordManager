@@ -1,0 +1,62 @@
+﻿<Window x:Class="PlainPasswordManager.View.HelpWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PlainPasswordManager.View"
+        xmlns:parent="clr-namespace:PlainPasswordManager"
+        mc:Ignorable="d"
+        Title="HelpWindow" Height="600" Width="800">
+    <Grid Margin="5">
+        <TabControl>
+            <TabItem Header="Description">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <StackPanel Margin="0,0,0,10" Orientation="Horizontal">
+                            <TextBlock Text="Plain Password Manager" FontWeight="Bold" FontSize="22"/>
+                            <TextBlock Margin="5,0,0,0" Text="by Dominik Werner (2018)" />
+                        </StackPanel>
+                        <TextBlock Text="Introduction" FontWeight="Bold" FontSize="16"/>
+                        <TextBlock TextWrapping="Wrap"
+                                   Text="This Application lets you save your passwords in a save way. All data you enter will be AES-256 (Advanced Encryption Standard) encrypted which at the moment has no known practical attack (https://en.wikipedia.org/wiki/Advanced_Encryption_Standard#Known_attacks). This Application does not communicate with any webservices so that the user at all times controls were his most important data is being stored."/>
+
+                        <TextBlock TextWrapping="Wrap"
+                                   FontWeight="Bold"
+                                   Text="Caution: If you forget your master password there is no way of recovering your data!"/>
+                        
+                        <TextBlock Margin="0,10,0,0" Text="Usage" FontWeight="Bold" FontSize="16"/>
+                        <TextBlock TextWrapping="Wrap"
+                                   Text="On the main screen you can add new password entries with the 'add' button or by pressing 'CTRL+A'. Once a new entry was added you can enter you information and save it by either clicking on 'save' or by pressing 'CTRL+S'. To enter a password click on the 'change' button next to it. By default a password won't be displayed, you have to check the 'show' checkbox to make it visible. The application tries to immediately remove the password from the main memory once it is hidden to protect it from malware."/>
+
+                        <TextBlock Margin="0,10,0,0" Text="Sorting and search" FontWeight="Bold" FontSize="16"/>
+                        <TextBlock TextWrapping="Wrap"
+                                   Text="You can sort your list by expanding the sorting menu and choose a property you want to sort your password data by. You can also expand the search menu to search for a specific credential entry."/>
+
+                        <TextBlock Margin="0,10,0,0" Text="Primary Paths" FontWeight="Bold" FontSize="16"/>
+                        <TextBlock TextWrapping="Wrap"
+                                   Text="When you open the 'settings' window you will see a 'primary file' field. The primary file is the password storage file which keeps your data in encrypted form. Only the Plain Password Manager is able to decrypt this file given you entered the correct master password at the start of the application. If you click on 'set file' you can choose a new location for the data to be stored. The old file will be deleted once you close the settings window and all data will be moved to the new file."/>
+
+                        <TextBlock Margin="0,10,0,0" Text="Secondary Paths" FontWeight="Bold" FontSize="16"/>
+                        <TextBlock TextWrapping="Wrap"
+                                   Text="When you open the 'settings' window you will see a list with all 'secondary paths'. This list will be empty if you have started the application for the first time. You can add new paths to this list. No data will be loaded from the files you specify in this list but every time you save your data it will also be saved to all files you have specified here. They serve as a kind of backup in case you loose your main file so keep them at a seperate hard drive if possible."/>
+
+                        <TextBlock Margin="0,10,0,0" Text="Import" FontWeight="Bold" FontSize="16"/>
+                        <TextBlock TextWrapping="Wrap"
+                                   Text="When you open the 'settings' window you will see a button called 'Import...' at the top right. This button can be used if you want to import an existing password storage file rather than using the current primary file. CAUTION: Once you import a password storage file you will be asked to enter the password of this new file. All data of the old file will be lost! The application will make a backup copy of the old file which you can import if you want to recover the data at some point."/>
+
+                        <TextBlock Margin="0,10,0,0" Text="Change Master Password" FontWeight="Bold" FontSize="16"/>
+                        <TextBlock TextWrapping="Wrap"
+                                   Text="You can at any time change the master password of your password storage. The application will then decrypt and re-encrypt all your data with the new password."/>
+
+                        
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+            <TabItem Header="License">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <TextBlock TextWrapping="Wrap" Text="Copyright 2018 Dominik Werner Licensed under the Apache License, Version 2.0 (the 'License'); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License." />
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>
