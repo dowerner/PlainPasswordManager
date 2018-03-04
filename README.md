@@ -1,4 +1,4 @@
-# PlainPasswordManager
+# Plain Password Manager
 A simple password manager for storing passwords encrypted.
 
 ## Introduction
