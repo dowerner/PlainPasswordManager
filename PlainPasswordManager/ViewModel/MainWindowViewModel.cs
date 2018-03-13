@@ -230,6 +230,7 @@ namespace PlainPasswordManager.ViewModel
         private string _openErrorMessage;               // error message which was encountered by the opeing thread (more stable to share it this way than to use a dispatcher to display the message)
         private List<CredentialEntry> _loadedEntries;   // credential entries loaded from the primary password storage file
         private HelpWindow _helpWindow;
+        private bool _wasOpenedSuccessfully;
         #endregion
 
         public MainWindowViewModel()
@@ -237,6 +238,7 @@ namespace PlainPasswordManager.ViewModel
             // initialize default values
             _masterPassword = null;
             _changeMasterPassword = false;
+            _wasOpenedSuccessfully = false;
             CredentialEntries = new ObservableCollection<CredentialEntryViewModel>();
             CredentialEntries.CollectionChanged += CredentialEntries_CollectionChanged;
             _credentialEntriesView = CollectionViewSource.GetDefaultView(CredentialEntries);
@@ -327,7 +329,7 @@ namespace PlainPasswordManager.ViewModel
         /// </summary>
         public void HandleApplicationClosing()
         {
-            if (_wasEdited)
+            if (_wasEdited && _wasOpenedSuccessfully)
             {
                 MessageBoxResult result = MessageBox.Show("There are unsaved changes. Save changes before closing?", "Save Changes", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if(result == MessageBoxResult.Yes)
@@ -472,6 +474,7 @@ namespace PlainPasswordManager.ViewModel
 
                 _loadedEntries = FileDirector.Instance.OpenEncrypted(FileDirector.Instance.PrimarySavePath, _masterPassword);    // load the data from the primary save file
                 _wrongPassword = false;  // if everything up until this point was executed the password was correct
+                _wasOpenedSuccessfully = true;
             }
             catch (Exception e)
             {

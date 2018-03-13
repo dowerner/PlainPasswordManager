@@ -109,7 +109,11 @@ namespace PlainPasswordManager.Model
 
             BinaryFormatter serializer = new BinaryFormatter();
 
-            if (File.Exists(path)) File.Copy(path, path + ".backup", true);
+            if (File.Exists(path))
+            {
+                File.Copy(path, path + ".backup", true);
+                File.Delete(path);      // ATTENTION: The file has to be removed because if there are less entries present in the new version the garbage data at the file end will corrupt the save!!!
+            }
 
             try
             {
