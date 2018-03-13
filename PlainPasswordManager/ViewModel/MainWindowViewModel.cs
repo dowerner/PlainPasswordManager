@@ -538,8 +538,9 @@ namespace PlainPasswordManager.ViewModel
             {
                 // decrypt all passwords and re-encrypt them with the new master-password
                 string oldEncryptedPassword = entry.GetEncryptedPassword();
-                string newEncryptedPassword = AESEncryption.EncryptWithPassword(AESEncryption.DecryptWithPassword(oldEncryptedPassword, _masterPassword), newMasterPassword);
                 entry.SetMasterPassword(newMasterPassword);
+                if (oldEncryptedPassword == null || oldEncryptedPassword == string.Empty) continue;
+                string newEncryptedPassword = AESEncryption.EncryptWithPassword(AESEncryption.DecryptWithPassword(oldEncryptedPassword, _masterPassword), newMasterPassword);
                 entry.Password = newEncryptedPassword;              
             }
         }
