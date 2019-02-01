@@ -37,11 +37,11 @@ namespace PlainPasswordManager.ViewModel
         /// </summary>
         public string PrimaryPath
         {
-            get { return _primaryPath; }
+            get => _primaryPath;
             set
             {
                 _primaryPath = value;
-                NotifyPropertyChanged("PrimaryPath");
+                NotifyPropertyChanged(nameof(PrimaryPath));
             }
         }
         private string _primaryPath;

@@ -24,11 +24,11 @@ namespace PlainPasswordManager.ViewModel
         /// </summary>
         public string Path
         {
-            get { return _path; }
+            get => _path;
             set
             {
                 _path = value;
-                NotifyPropertyChanged("Path");
+                NotifyPropertyChanged(nameof(Path));
             }
         }
         private string _path;

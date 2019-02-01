@@ -19,7 +19,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Security;
 using System.Threading.Tasks;
 using System.Windows;
@@ -34,6 +36,10 @@ namespace PlainPasswordManager.ViewModel
     public class MainWindowViewModel : BaseViewModel
     {
         #region Events
+        public delegate void OnItemAddedHandler();
+
+        public event OnItemAddedHandler OnItemAdded;
+
         public delegate void OnShutdownHandler();
 
         /// <summary>
@@ -55,7 +61,7 @@ namespace PlainPasswordManager.ViewModel
         public ObservableCollection<CredentialEntryViewModel> CredentialEntries { get; private set; }
 
         /// <summary>
-        /// View of credential entries which can be used to sort and search without chaning the underlying list.
+        /// View of credential entries which can be used to sort and search without changing the underlying list.
         /// </summary>
         private ICollectionView _credentialEntriesView;
 
@@ -64,12 +70,12 @@ namespace PlainPasswordManager.ViewModel
         /// </summary>
         public bool WasEdited
         {
-            get { return _wasEdited; }
+            get => _wasEdited;
             set
             {
                 _wasEdited = value;
-                NotifyPropertyChanged("WasEdited");
-                NotifyPropertyChanged("WindowTitle");
+                NotifyPropertyChanged(nameof(WasEdited));
+                NotifyPropertyChanged(nameof(WindowTitle));
             }
         }
         private bool _wasEdited;
@@ -91,17 +97,17 @@ namespace PlainPasswordManager.ViewModel
         /// </summary>
         public bool ShowFilters
         {
-            get { return _showFilters; }
+            get => _showFilters;
             set
             {
                 _showFilters = value;
-                NotifyPropertyChanged("ShowFilters");
-                NotifyPropertyChanged("FilterRowHeight");
+                NotifyPropertyChanged(nameof(ShowFilters));
+                NotifyPropertyChanged(nameof(FilterRowHeight));
                 if (_showFilters)
                 {
                     _showSorting = false;
-                    NotifyPropertyChanged("ShowSorting");
-                    NotifyPropertyChanged("SortingRowHeight");
+                    NotifyPropertyChanged(nameof(ShowSorting));
+                    NotifyPropertyChanged(nameof(SortingRowHeight));
                 }
             }
         }
@@ -123,17 +129,17 @@ namespace PlainPasswordManager.ViewModel
         /// </summary>
         public bool ShowSorting
         {
-            get { return _showSorting; }
+            get => _showSorting;
             set
             {
                 _showSorting = value;
-                NotifyPropertyChanged("ShowSorting");
-                NotifyPropertyChanged("SortingRowHeight");
+                NotifyPropertyChanged(nameof(ShowSorting));
+                NotifyPropertyChanged(nameof(SortingRowHeight));
                 if (_showSorting)
                 {
                     _showFilters = false;
-                    NotifyPropertyChanged("ShowFilters");
-                    NotifyPropertyChanged("FilterRowHeight");
+                    NotifyPropertyChanged(nameof(ShowFilters));
+                    NotifyPropertyChanged(nameof(FilterRowHeight));
                 }
             }
         }
@@ -144,10 +150,7 @@ namespace PlainPasswordManager.ViewModel
         /// </summary>
         public GridLength SortingRowHeight
         {
-            get
-            {
-                return _showSorting ? new GridLength(expandedGridHeight) : new GridLength(collapsedGridHeight);
-            }
+            get => _showSorting ? new GridLength(expandedGridHeight) : new GridLength(collapsedGridHeight);
         }
 
         /// <summary>
@@ -155,16 +158,19 @@ namespace PlainPasswordManager.ViewModel
         /// </summary>
         public string SearchText
         {
-            get { return _searchText; }
+            get => _searchText;
             set
             {
                 _searchText = value;
-                NotifyPropertyChanged("SearchText");
+                NotifyPropertyChanged(nameof(SearchText));
 
                 string lowerCase = _searchText.ToLower();
 
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
+
                 // set filters
-                _credentialEntriesView.Filter = delegate (object item)
+                /*_credentialEntriesView.Filter = delegate (object item)
                 {
                     CredentialEntryViewModel entry = (CredentialEntryViewModel)item;
                     return (entry.Title != null && entry.Title.ToLower().Contains(lowerCase))
@@ -173,18 +179,32 @@ namespace PlainPasswordManager.ViewModel
                         || (entry.Email != null && entry.Email.ToLower().Contains(lowerCase))
                         || (entry.ProvidedName != null && entry.ProvidedName.ToLower().Contains(lowerCase))
                         || (entry.Url != null && entry.Url.ToLower().Contains(lowerCase));
-                };
+                };*/
+                foreach (CredentialEntryViewModel entryVm in CredentialEntries) entryVm.VisibleByFilter = false;
+                foreach (CredentialEntryViewModel entryVm in CredentialEntries.Where(
+                    item => item.Title != null && item.Title.ToLower().Contains(lowerCase)
+                         || item.UserName != null && item.UserName.ToLower().Contains(lowerCase)
+                         || item.AddressData != null && item.AddressData.ToLower().Contains(lowerCase)
+                         || item.Email != null && item.Email.ToLower().Contains(lowerCase)
+                         || item.ProvidedName != null && item.ProvidedName.ToLower().Contains(lowerCase)
+                         || item.Url != null && item.Url.ToLower().Contains(lowerCase)))
+                {
+                    entryVm.VisibleByFilter = true;
+                }
+
+                stopwatch.Stop();
+                //MessageBox.Show(stopwatch.ElapsedMilliseconds.ToString());
             }
         }
         private string _searchText;
 
         public SortingMode SortedBy
         {
-            get { return _sortedBy; }
+            get => _sortedBy;
             set
             {
                 _sortedBy = value;
-                NotifyPropertyChanged("SortedBy");
+                NotifyPropertyChanged(nameof(SortedBy));
 
                 using (_credentialEntriesView.DeferRefresh())
                 {
@@ -200,11 +220,11 @@ namespace PlainPasswordManager.ViewModel
         /// </summary>
         public bool SortDescending
         {
-            get { return _sortDescending; }
+            get => _sortDescending;
             set
             {
                 _sortDescending = value;
-                NotifyPropertyChanged("SortDescending");
+                NotifyPropertyChanged(nameof(SortDescending));
                 SortedBy = _sortedBy;
             }
         }
@@ -227,7 +247,7 @@ namespace PlainPasswordManager.ViewModel
         private SecureString _masterPassword;
         private bool _changeMasterPassword;
         private bool _wrongPassword;                    // keep track of the password entry status (is set by the opening thread)
-        private string _openErrorMessage;               // error message which was encountered by the opeing thread (more stable to share it this way than to use a dispatcher to display the message)
+        private string _openErrorMessage;               // error message which was encountered by the opening thread (more stable to share it this way than to use a dispatcher to display the message)
         private List<CredentialEntry> _loadedEntries;   // credential entries loaded from the primary password storage file
         private HelpWindow _helpWindow;
         private bool _wasOpenedSuccessfully;
@@ -263,6 +283,19 @@ namespace PlainPasswordManager.ViewModel
         public void Init()
         {
             CheckPasswordFile();
+
+            /*string newEncryptedPassword = AESEncryption.EncryptWithPassword("Qwer1234", _masterPassword);
+
+            for (int i = 0; i < 200; i++)
+            {
+                AddEntry();
+                CredentialEntries[CredentialEntries.Count - 1].Title = string.Format("Pass {0}", CredentialEntries.Count - 1);
+                CredentialEntries[CredentialEntries.Count - 1].UserName = "max.muster";
+                CredentialEntries[CredentialEntries.Count - 1].Email = "max.muster@musterus.org";
+                CredentialEntries[CredentialEntries.Count - 1].AddressData = "Muster Street";
+                CredentialEntries[CredentialEntries.Count - 1].Url = string.Format("website{0}.com", CredentialEntries.Count - 1);
+                CredentialEntries[CredentialEntries.Count - 1].Password = newEncryptedPassword;
+            }*/
         }
 
         /// <summary>
@@ -270,9 +303,12 @@ namespace PlainPasswordManager.ViewModel
         /// </summary>
         public void AddEntry()
         {
-            CredentialEntry entry = new CredentialEntry(_masterPassword, string.Empty);
-            entry.Id = CredentialEntries.Count;
+            CredentialEntry entry = new CredentialEntry(_masterPassword, string.Empty)
+            {
+                Id = CredentialEntries.Count
+            };
             CredentialEntries.Add(new CredentialEntryViewModel(entry));
+            OnItemAdded?.Invoke();
         }
 
         /// <summary>
@@ -419,7 +455,7 @@ namespace PlainPasswordManager.ViewModel
             {
                 CredentialEntries.Clear();
                 _wrongPassword = true;
-                while (_wrongPassword)   // loop unitl password was correctly entered or user quits
+                while (_wrongPassword)   // loop until password was correctly entered or user quits
                 {
                     try
                     {
@@ -427,7 +463,7 @@ namespace PlainPasswordManager.ViewModel
 
                         // Load configuration
                         if (File.Exists(FileDirector.SettingsFilePath)) FileDirector.Instance.LoadSettings();
-                        else FileDirector.Instance.SaveSettings();  // create initial config
+                        else FileDirector.Instance.SaveSettings();  // create initial configuration
 
                         _loadedEntries = null;
                         Task task = Task.Run(() => LoadDataAsync());
@@ -446,7 +482,7 @@ namespace PlainPasswordManager.ViewModel
                             {
                                 CredentialEntries.Add(new CredentialEntryViewModel(entry));    // populate main view with loaded data
                             }
-                            SaveAsync();     // synch secondary saves
+                            SaveAsync();     // synchronize secondary saves
                         }
                         else
                         {
@@ -497,7 +533,7 @@ namespace PlainPasswordManager.ViewModel
         }
 
         /// <summary>
-        /// This method is needed in case the user cancles the input of the password and wants to shut down the application
+        /// This method is needed in case the user cancels the input of the password and wants to shut down the application
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>

@@ -33,16 +33,28 @@ namespace PlainPasswordManager.ViewModel
         #endregion
 
         #region Properties
+
+        public bool VisibleByFilter
+        {
+            get => _visibleByFilter;
+            set
+            {
+                _visibleByFilter = value;
+                NotifyPropertyChanged(nameof(VisibleByFilter));
+            }
+        }
+        private bool _visibleByFilter;
+
         /// <summary>
         /// Gets or sets the title of the entry
         /// </summary>
         public string Title
         {
-            get { return _model.Title; }
+            get => _model.Title;
             set
             {
                 _model.Title = value;
-                NotifyPropertyChanged("Title");
+                NotifyPropertyChanged(nameof(Title));
                 CredentialEntryChanged?.Invoke(this);
             }
         }
@@ -52,11 +64,11 @@ namespace PlainPasswordManager.ViewModel
         /// </summary>
         public int Id
         {
-            get { return _model.Id; }
+            get => _model.Id;
             set
             {
                 _model.Id = value;
-                NotifyPropertyChanged("Id");
+                NotifyPropertyChanged(nameof(Id));
                 CredentialEntryChanged?.Invoke(this);
             }
         }
@@ -66,11 +78,11 @@ namespace PlainPasswordManager.ViewModel
         /// </summary>
         public string UserName
         {
-            get { return _model.UserName; }
+            get => _model.UserName;
             set
             {
                 _model.UserName = value;
-                NotifyPropertyChanged("UserName");
+                NotifyPropertyChanged(nameof(UserName));
                 CredentialEntryChanged?.Invoke(this);
             }
         }
@@ -80,11 +92,11 @@ namespace PlainPasswordManager.ViewModel
         /// </summary>
         public string ProvidedName
         {
-            get { return _model.ProvidedName; }
+            get => _model.ProvidedName;
             set
             {
                 _model.ProvidedName = value;
-                NotifyPropertyChanged("ProvidedName");
+                NotifyPropertyChanged(nameof(ProvidedName));
                 CredentialEntryChanged?.Invoke(this);
             }
         }
@@ -94,25 +106,25 @@ namespace PlainPasswordManager.ViewModel
         /// </summary>
         public string Email
         {
-            get { return _model.Email; }
+            get => _model.Email;
             set
             {
                 _model.Email = value;
-                NotifyPropertyChanged("Email");
+                NotifyPropertyChanged(nameof(Email));
                 CredentialEntryChanged?.Invoke(this);
             }
         }
 
         /// <summary>
-        /// Gets or sets the Url of the entry
+        /// Gets or sets the URL of the entry
         /// </summary>
         public string Url
         {
-            get { return _model.Url; }
+            get => _model.Url;
             set
             {
                 _model.Url = value;
-                NotifyPropertyChanged("Url");
+                NotifyPropertyChanged(nameof(Url));
             }
         }
 
@@ -121,11 +133,11 @@ namespace PlainPasswordManager.ViewModel
         /// </summary>
         public string AddressData
         {
-            get { return _model.AddressData; }
+            get => _model.AddressData;
             set
             {
                 _model.AddressData = value;
-                NotifyPropertyChanged("AddressData");
+                NotifyPropertyChanged(nameof(AddressData));
                 CredentialEntryChanged?.Invoke(this);
             }
         }
@@ -135,11 +147,11 @@ namespace PlainPasswordManager.ViewModel
         /// </summary>
         public string Password
         {
-            get { return _model.Password.Value; }
+            get => _model.Password.Value;
             set
             {
                 _model.Password.SetEncryptedPassword(value);
-                NotifyPropertyChanged("Password");
+                NotifyPropertyChanged(nameof(Password));
             }
         }
 
@@ -148,12 +160,12 @@ namespace PlainPasswordManager.ViewModel
         /// </summary>
         public bool ShowPassword
         {
-            get { return !_model.Password.Encrypted; }
+            get => !_model.Password.Encrypted;
             set
             {
                 _model.Password.Encrypted = !value;
-                NotifyPropertyChanged("ShowPassword");
-                NotifyPropertyChanged("Password");
+                NotifyPropertyChanged(nameof(ShowPassword));
+                NotifyPropertyChanged(nameof(Password));
             }
         }
 
@@ -184,6 +196,7 @@ namespace PlainPasswordManager.ViewModel
             // initialize the view model
             _model = entry;
             SetEntryPasswordCommand = new SetEntryPasswordCommand(this);
+            VisibleByFilter = true;
         }
 
         #region PublicMethods
@@ -204,7 +217,7 @@ namespace PlainPasswordManager.ViewModel
         {
             _model.DecryptionPassword = masterPassword;
             _model.Password.SetMasterPassword(masterPassword);
-            NotifyPropertyChanged("ShowPassword");
+            NotifyPropertyChanged(nameof(ShowPassword));
         }
 
         /// <summary>
@@ -243,7 +256,7 @@ namespace PlainPasswordManager.ViewModel
         private void PwWindow_PasswordFound(string encryptedPassword)
         {
             Password = encryptedPassword;
-            NotifyPropertyChanged("ShowPasswordEnabled");
+            NotifyPropertyChanged(nameof(ShowPasswordEnabled));
             CredentialEntryChanged?.Invoke(this);
         }
         #endregion

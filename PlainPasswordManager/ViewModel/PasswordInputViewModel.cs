@@ -26,11 +26,11 @@ namespace PlainPasswordManager.ViewModel
         /// </summary>
         public Visibility Pw2Visibility
         {
-            get { return _pw2Visibility; }
+            get => _pw2Visibility;
             set
             {
                 _pw2Visibility = value;
-                NotifyPropertyChanged("Pw2Visibility");
+                NotifyPropertyChanged(nameof(Pw2Visibility));
             }
         }
         private Visibility _pw2Visibility;
@@ -40,11 +40,11 @@ namespace PlainPasswordManager.ViewModel
         /// </summary>
         public string Pw1Title
         {
-            get { return _pw1Title; }
+            get => _pw1Title;
             set
             {
                 _pw1Title = value;
-                NotifyPropertyChanged("Pw1Title");
+                NotifyPropertyChanged(nameof(Pw1Title));
             }
         }
         private string _pw1Title;
@@ -54,11 +54,11 @@ namespace PlainPasswordManager.ViewModel
         /// </summary>
         public string Pw2Title
         {
-            get { return _pw2Title; }
+            get => _pw2Title;
             set
             {
                 _pw2Title = value;
-                NotifyPropertyChanged("Pw2Title");
+                NotifyPropertyChanged(nameof(Pw2Title));
             }
         }
         private string _pw2Title;
