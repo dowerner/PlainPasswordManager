@@ -44,7 +44,7 @@ namespace PlainPasswordManager.Model
         public List<string> SecondarySavePaths { get; private set; }
 
         /// <summary>
-        /// Save application settings for xml file
+        /// Save application settings for XML file
         /// </summary>
         public void SaveSettings()
         {
@@ -72,7 +72,7 @@ namespace PlainPasswordManager.Model
         }
 
         /// <summary>
-        /// Load settings from xml
+        /// Load settings from XML
         /// </summary>
         public void LoadSettings()
         {
@@ -103,8 +103,7 @@ namespace PlainPasswordManager.Model
         /// <param name="encryptionPassword"></param>
         public void SaveEncrypted(string path, List<CredentialEntry> data, SecureString encryptionPassword)
         {
-            SaveData saveData = new SaveData();   // prepare data for serialization
-            saveData.CredentialEntries = new List<SerializeableCredentialEntry>();
+            SaveData saveData = new SaveData { CredentialEntries = new List<SerializeableCredentialEntry>() };   // prepare data for serialization
             foreach (CredentialEntry entry in data) saveData.CredentialEntries.Add(entry.ToSerializeable());   // convert entries
 
             BinaryFormatter serializer = new BinaryFormatter();

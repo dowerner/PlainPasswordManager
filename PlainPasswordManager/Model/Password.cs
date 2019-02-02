@@ -37,6 +37,7 @@ namespace PlainPasswordManager.Model
             get { return _encrypted; }
             set
             {
+                if (_encrypted == value) return;    // don't do anything if the new value would be the same -> saves performance
                 _encrypted = value;
                 if (_encrypted) // if the password should be encrypted, destroy the clear text password in the memory
                 {

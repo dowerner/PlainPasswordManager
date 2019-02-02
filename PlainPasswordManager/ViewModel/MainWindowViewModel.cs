@@ -36,7 +36,7 @@ namespace PlainPasswordManager.ViewModel
     public class MainWindowViewModel : BaseViewModel
     {
         #region Events
-        public delegate void OnItemAddedHandler();
+        public delegate void OnItemAddedHandler(CredentialEntryViewModel newEntry);
 
         public event OnItemAddedHandler OnItemAdded;
 
@@ -307,8 +307,9 @@ namespace PlainPasswordManager.ViewModel
             {
                 Id = CredentialEntries.Count
             };
-            CredentialEntries.Add(new CredentialEntryViewModel(entry));
-            OnItemAdded?.Invoke();
+            CredentialEntryViewModel credentialEntryViewModel = new CredentialEntryViewModel(entry);
+            CredentialEntries.Add(credentialEntryViewModel);
+            OnItemAdded?.Invoke(credentialEntryViewModel);
         }
 
         /// <summary>

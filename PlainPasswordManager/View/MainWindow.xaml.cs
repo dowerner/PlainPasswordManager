@@ -35,9 +35,9 @@ namespace PlainPasswordManager.View
             DataContext = _vm;
         }
 
-        private void _vm_OnItemAdded()
+        private void _vm_OnItemAdded(CredentialEntryViewModel newEntry)
         {
-            ItemsView.ScrollIntoView(_vm.CredentialEntries[_vm.CredentialEntries.Count - 1]);
+            ItemsView.ScrollIntoView(newEntry);
         }
 
         private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
